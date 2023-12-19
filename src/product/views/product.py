@@ -14,10 +14,11 @@ class CreateProductView(generic.TemplateView):
         return context
 
 
-class ProductListView(generic.TemplateView):
+class ProductListView(generic.ListView):
     template_name = "products/list.html"
+    model = Product
+    context_object_name = 'products'
+    paginate_by = 5  # Set the number of items per page
 
-    def get_context_data(self, **kwargs):
-        context = super(ProductListView, self).get_context_data(**kwargs)
-        context["products"] = Product.objects.all()
-        return context
+    def get_queryset(self):
+        return Product.objects.all()
