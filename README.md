@@ -13,6 +13,9 @@ pipenv install
 pipenv shell
 ```
 ```sh
+npm install
+```
+```sh
 npm run watch
 ```
 ```sh
