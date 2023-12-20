@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import include, path
 
 from product.views.product import CreateProductView, ProductListView
 from product.views.variant import VariantView, VariantCreateView, VariantEditView
@@ -14,4 +14,7 @@ urlpatterns = [
     # Products URLs
     path("create/", CreateProductView.as_view(), name="create.product"),
     path("list/", ProductListView.as_view(), name="list.product"),
+
+    # Api URLs
+    path("api/", include(("product.api.urls", "product"), namespace="api")),
 ]

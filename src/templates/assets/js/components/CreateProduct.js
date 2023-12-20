@@ -2,6 +2,7 @@ import React, {useState} from 'react';
 import TagsInput from 'react-tagsinput';
 import 'react-tagsinput/react-tagsinput.css';
 import Dropzone from 'react-dropzone'
+import axios from 'axios';
 
 
 const CreateProduct = (props) => {
@@ -14,6 +15,10 @@ const CreateProduct = (props) => {
             tags: []
         }
     ])
+
+    const [productImage, setProductImage] = useState(null)
+    const [productDetails, setProductDetails] = useState({})
+    
     console.log(typeof props.variants)
     // handle click event of the Add button
     const handleAddClick = () => {
@@ -24,6 +29,16 @@ const CreateProduct = (props) => {
             option: available_variants[0],
             tags: []
         }])
+    };
+
+    const onProductDetailChange = (event) => {
+        const { name, value } = event.target;
+        setProductDetails((prevS) => {
+            return {
+                ...prevS,
+                [name]: value,
+            };
+        });
     };
 
     // handle input change on tag input
@@ -74,10 +89,42 @@ const CreateProduct = (props) => {
         return ans;
     }
 
+    const onProductVariantPriceChange = (event, productVariantTitle) => {
+        const { name, value } = event.target;
+
+        setProductVariantPrices((prevS) => {
+            return prevS.map((pV) =>
+                pV.title === productVariantTitle ? { ...pV, [name]: value } : pV
+            );
+        });
+    };
+
     // Save product
     let saveProduct = (event) => {
         event.preventDefault();
         // TODO : write your code here to save the product
+        let formData = new FormData();
+
+        formData.append("product_details", JSON.stringify(productDetails));
+        productImage && formData.append("product_image", productImage[0]);
+        formData.append("product_variants", JSON.stringify(productVariants));
+        formData.append(
+            "product_variant_prices",
+            JSON.stringify(productVariantPrices)
+        );
+
+        axios({
+            url: "/product/api/create/",
+            method: "post",
+            data: formData,
+            headers: {
+                "Content-Type": "multipart/form-data",
+            },
+        })
+            .then((res) => {
+                window.location.href = "/product/list/";
+            })
+            .catch((err) => console.error(err));
     }
 
 
@@ -90,15 +137,15 @@ const CreateProduct = (props) => {
                             <div className="card-body">
                                 <div className="form-group">
                                     <label htmlFor="">Product Name</label>
-                                    <input type="text" placeholder="Product Name" className="form-control"/>
+                                    <input name="title" type="text" placeholder="Product Name" className="form-control" value={productDetails.title} onChange={onProductDetailChange}/>
                                 </div>
                                 <div className="form-group">
                                     <label htmlFor="">Product SKU</label>
-                                    <input type="text" placeholder="Product Name" className="form-control"/>
+                                    <input name="sku" type="text" placeholder="Product SKU" className="form-control" value={productDetails.sku} onChange={onProductDetailChange}/>
                                 </div>
                                 <div className="form-group">
                                     <label htmlFor="">Description</label>
-                                    <textarea id="" cols="30" rows="4" className="form-control"></textarea>
+                                    <textarea name="description" id="" cols="30" rows="4" className="form-control" value={productDetails.description} onChange={onProductDetailChange}></textarea>
                                 </div>
                             </div>
                         </div>
@@ -109,7 +156,7 @@ const CreateProduct = (props) => {
                                 <h6 className="m-0 font-weight-bold text-primary">Media</h6>
                             </div>
                             <div className="card-body border">
-                                <Dropzone onDrop={acceptedFiles => console.log(acceptedFiles)}>
+                                <Dropzone onDrop={acceptedFiles => setProductImage(acceptedFiles)}>
                                     {({getRootProps, getInputProps}) => (
                                         <section>
                                             <div {...getRootProps()}>
@@ -201,8 +248,8 @@ const CreateProduct = (props) => {
                                                 return (
                                                     <tr key={index}>
                                                         <td>{productVariantPrice.title}</td>
-                                                        <td><input className="form-control" type="text"/></td>
-                                                        <td><input className="form-control" type="text"/></td>
+                                                        <td><input name="price" onChange={(e) => onProductVariantPriceChange(e, productVariantPrice.title)} className="form-control" type="text"/></td>
+                                                        <td><input name="stock" onChange={(e) => onProductVariantPriceChange(e, productVariantPrice.title)} className="form-control" type="text"/></td>
                                                     </tr>
                                                 )
                                             })
