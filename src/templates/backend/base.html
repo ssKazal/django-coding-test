@@ -20,6 +20,8 @@
             rel="stylesheet">
 
     <link href="{% static '/css/main.css' %}" rel="stylesheet">
+
+    {% block style %}{% endblock %}
 </head>
 <body id="page-top">
 <div id="wrapper">
@@ -79,5 +81,6 @@
 
 <script type="text/javascript" src="{% static '/js/chunk-vendors.js' %}"></script>
 <script type="text/javascript" src="{% static '/js/app.js' %}"></script>
+{% block script %}{% endblock %}
 </body>
 </html>

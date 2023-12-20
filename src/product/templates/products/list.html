@@ -2,6 +2,10 @@
 
 {% block title %} Product List {% endblock %}
 
+{% block style %}
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+{% endblock %}
+
 {% block content %}
 
     <div class="d-sm-flex align-items-center justify-content-between mb-4">
@@ -16,9 +20,15 @@
                     <input type="text" name="title" placeholder="Product Title" class="form-control">
                 </div>
                 <div class="col-md-2">
-                    <select name="variant" id="" class="form-control">
+                    <select name="variant" id="" class="form-control js-example-basic-single">
                         <option selected disabled>--Select A Variant--</option>
-
+                        {% for variant_title, titles in variant_titles_by_variant.items %}
+                            <optgroup label="{{ variant_title }}">
+                                {% for title in titles %}
+                                    <option value="{{ title }}">{{ title }}</option>
+                                {% endfor %}
+                            </optgroup>
+                        {% endfor %}
                     </select>
                 </div>
 
@@ -141,4 +151,13 @@
             {% endif %}
         </div>
     </div>
+{% endblock %}
+
+{% block script %}
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script type="text/javascript">
+    $(document).ready(function() {
+        $('.js-example-basic-single').select2();
+    });
+</script>
 {% endblock %}
