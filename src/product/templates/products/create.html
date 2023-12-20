@@ -1,10 +1,10 @@
 {% extends 'backend/base.html' %}
 
-{% block title %} Create Product {% endblock %}
+{% block title %} {% if product_id %}Update{% else %}Create{% endif%} Product {% endblock %}
 
 {% block content %}
     <div class="d-sm-flex align-items-center justify-content-between mb-4">
-        <h1 class="h3 mb-0 text-gray-800">Create Product</h1>
+        <h1 class="h3 mb-0 text-gray-800">{% if product_id %}Update{% else %}Create{% endif%} Product</h1>
         <a href="{% url 'product:create.product' %}" class="float-right btn btn-primary">All Product</a>
     </div>
 
@@ -15,7 +15,7 @@
     </script>
 
     <div id="root">
-        <CreateProduct id="variants" data-variants="{{ variants|safe }}"></CreateProduct>
+        <CreateProduct id="variants" data-variants="{{ variants|safe }}" {% if product_id %}data-is_for_update="true" data-product_id="{{ product_id }}"{% endif%}></CreateProduct>
     </div>
 
 {% endblock %}

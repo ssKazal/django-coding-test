@@ -13,6 +13,7 @@ urlpatterns = [
 
     # Products URLs
     path("create/", CreateProductView.as_view(), name="create.product"),
+    path('update/<int:product_id>/', CreateProductView.as_view(), name='update.product'),
     path("list/", ProductListView.as_view(), name="list.product"),
 
     # Api URLs
